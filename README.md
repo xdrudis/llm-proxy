@@ -19,9 +19,27 @@ Your application sends a request and waits for a response just like before, exce
 3. Batched requests are sent to OpenAI's batch API endpoint.
 4. The proxy waits until the batch finishes.
 
-<p align="center">
-	<img src='/imgs/diagram.png'>
-</p>
+```mermaid
+sequenceDiagram
+    participant App
+    participant llm-proxy
+    participant OpenAI
+
+    App->>llm-proxy: req1
+    App->>llm-proxy: req...
+    App->>llm-proxy: req1000
+    llm-proxy->>OpenAI: batch(req1, req..., req1000)
+    App->>llm-proxy: req1001
+    App->>llm-proxy: req1002
+    llm-proxy->>OpenAI: batch(req1001, req1002)
+    OpenAI-->>llm-proxy: async resp1, resp..., resp1000
+    llm-proxy->>App: resp1
+    llm-proxy->>App: resp...
+    llm-proxy->>App: resp1000
+    OpenAI-->>llm-proxy: async resp1002, resp1001
+    llm-proxy->>App: resp1002
+    llm-proxy->>App: resp1001
+```
 
 ## Getting Started
 
